@@ -91,6 +91,54 @@ describe("route caching", () => {
     expect(secondHtml).toContain("value:2");
   });
 
+  it("bypasses the default cache for personalized request headers", async () => {
+    for (const headers of [{ cookie: "session=one" }, { authorization: "Bearer token" }]) {
+      let counter = 0;
+
+      const Page = defineComponent({
+        props: {
+          value: {
+            required: true,
+            type: Number,
+          },
+        },
+        setup(props) {
+          return () => h("p", `value:${props.value}`);
+        },
+      });
+
+      const handler = createRequestHandler({
+        app: defineApp({
+          routes: [
+            defineRoute({
+              path: "/personalized",
+              component: Page,
+              getProps() {
+                counter += 1;
+                return { value: counter };
+              },
+              render: {
+                cache: true,
+                strategy: "isr",
+                revalidate: 60,
+              },
+            }),
+          ],
+        }),
+      });
+
+      const firstHtml = await (
+        await handler(new Request("https://example.test/personalized", { headers }))
+      ).text();
+      const secondHtml = await (
+        await handler(new Request("https://example.test/personalized", { headers }))
+      ).text();
+
+      expect(firstHtml).toContain("value:1");
+      expect(secondHtml).toContain("value:2");
+    }
+  });
+
   it("collects SSG and explicit prerender routes", async () => {
     const Page = defineComponent({
       setup() {

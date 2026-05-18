@@ -33,6 +33,10 @@ export function isCacheableRequest(request: Request, render: NormalizedRenderOpt
     return false;
   }
 
+  if (hasPersonalizedCacheHeaders(request)) {
+    return false;
+  }
+
   return (
     render.strategy === "ssg" ||
     render.strategy === "isr" ||
@@ -97,4 +101,8 @@ export function responseFromCache(entry: RenderCacheEntry, status: "HIT" | "STAL
     status: entry.status,
     headers,
   });
+}
+
+function hasPersonalizedCacheHeaders(request: Request): boolean {
+  return request.headers.has("authorization") || request.headers.has("cookie");
 }

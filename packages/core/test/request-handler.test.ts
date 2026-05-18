@@ -121,6 +121,36 @@ describe("createRequestHandler", () => {
     expect(html.match(/\/assets\/runtime\.css/g)).toHaveLength(1);
   });
 
+  it("rejects invalid rendered HTML attribute names", async () => {
+    const HomePage = defineComponent({
+      setup() {
+        return () => h("main", "home");
+      },
+    });
+    const unsafeMeta = {
+      name: "description",
+      'content" autofocus="true': "boom",
+    };
+
+    const handler = createRequestHandler({
+      app: defineApp({
+        routes: [
+          defineRoute({
+            path: "/",
+            component: HomePage,
+            head: {
+              meta: [unsafeMeta],
+            },
+          }),
+        ],
+      }),
+    });
+
+    await expect(handler(new Request("https://example.test/"))).rejects.toThrow(
+      'Invalid HTML attribute name: content" autofocus="true',
+    );
+  });
+
   it("resolves route head functions per request", async () => {
     const PostPage = defineComponent({
       props: {

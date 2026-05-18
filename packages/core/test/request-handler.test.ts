@@ -46,6 +46,30 @@ describe("createRequestHandler", () => {
     expect(html).toContain('data-slug="hello-world"');
   });
 
+  it("treats malformed dynamic route params as a route miss", async () => {
+    const PostPage = defineComponent({
+      setup() {
+        return () => h("article", "post");
+      },
+    });
+
+    const handler = createRequestHandler({
+      app: defineApp({
+        routes: [
+          defineRoute({
+            path: "/posts/:slug",
+            component: PostPage,
+          }),
+        ],
+      }),
+    });
+
+    const response = await handler(new Request("https://example.test/posts/%E0%A4%A"));
+
+    expect(response.status).toBe(404);
+    await expect(response.text()).resolves.toBe("Not Found");
+  });
+
   it("renders static route head metadata and shared stylesheets", async () => {
     const HomePage = defineComponent({
       setup() {

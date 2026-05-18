@@ -111,9 +111,17 @@ export function matchRoute(
       continue;
     }
 
-    const params = Object.fromEntries(
-      route.keys.map((key, index) => [key, decodeURIComponent(match[index + 1] ?? "")]),
-    );
+    const params: Record<string, string> = {};
+
+    for (const [index, key] of route.keys.entries()) {
+      const value = decodePathParam(match[index + 1] ?? "");
+
+      if (value === undefined) {
+        return undefined;
+      }
+
+      params[key] = value;
+    }
 
     return {
       definition: route.definition,
@@ -141,4 +149,12 @@ function normalizePathPattern(path: string): string {
 
 function escapeRegExp(value: string): string {
   return value.replace(/[|\\{}()[\]^$+?.]/g, "\\$&");
+}
+
+function decodePathParam(value: string): string | undefined {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return undefined;
+  }
 }

@@ -73,7 +73,7 @@ pnpm exec vite dev
 
 Examples alias the workspace source directly, so they always exercise the in-repo implementation.
 
-There is also a scenario-first index at [examples/README.md](/Users/ubugeeei/Source/github.com/ubugeeei/vue-server/examples/README.md).
+There is also a scenario-first index at [examples/README.md](examples/README.md).
 
 ## Dynamic OG Images
 
@@ -150,7 +150,7 @@ pnpm add -D playwright
 pnpm exec playwright install chromium
 ```
 
-The explicit-routes example includes this pattern at [examples/explicit-routes/src/app.ts](/Users/ubugeeei/Source/github.com/ubugeeei/vue-server/examples/explicit-routes/src/app.ts).
+The explicit-routes example includes this pattern at [examples/explicit-routes/src/app.ts](examples/explicit-routes/src/app.ts).
 
 ## Releases
 

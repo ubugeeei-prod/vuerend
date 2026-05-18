@@ -48,8 +48,8 @@ export class MemoryRenderCache implements RenderCache {
   async revalidatePath(path: string): Promise<void> {
     const normalized = normalizeRevalidationPath(path);
 
-    for (const key of this.entries.keys()) {
-      if (key.startsWith(normalized)) {
+    for (const key of [...this.entries.keys()]) {
+      if (matchesRevalidationPath(key, normalized)) {
         await this.delete(key);
       }
     }
@@ -95,4 +95,12 @@ function normalizeRevalidationPath(path: string): string {
   }
 
   return path.startsWith("/") ? path : `/${path}`;
+}
+
+function matchesRevalidationPath(key: string, path: string): boolean {
+  if (path === "/") {
+    return key.startsWith("/");
+  }
+
+  return key === path || key.startsWith(`${path}/`) || key.startsWith(`${path}?`);
 }

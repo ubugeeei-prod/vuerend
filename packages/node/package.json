@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@vuerend/core": "workspace:*",
-    "srvx": "^0.11.14"
+    "srvx": "^0.11.15"
   },
   "peerDependencies": {
     "playwright": "^1.59.1",

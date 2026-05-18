@@ -16,6 +16,7 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: npm-publish
 
     steps:
       - name: Checkout

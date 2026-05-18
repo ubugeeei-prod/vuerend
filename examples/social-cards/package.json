@@ -7,6 +7,6 @@
     "@vuerend/node": "workspace:*",
     "srvx": "^0.11.14",
     "vite": "^8.0.13",
-    "vue": "3.6.0-beta.10"
+    "vue": "3.6.0-beta.12"
   }
 }

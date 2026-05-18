@@ -44,12 +44,12 @@
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.5",
     "@vitejs/plugin-vue-jsx": "^5.1.5",
-    "@vue/server-renderer": "^3.5.31 || ^3.6.0-beta.10",
+    "@vue/server-renderer": "^3.6.0-beta.12",
     "srvx": "^0.11.14"
   },
   "devDependencies": {
     "@vue/runtime-vapor": "3.6.0-beta.10",
-    "vue": "3.6.0-beta.10"
+    "vue": "3.6.0-beta.12"
   },
   "peerDependencies": {
     "@vue/runtime-vapor": "^3.6.0-beta.10",

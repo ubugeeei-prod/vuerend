@@ -5,10 +5,9 @@
     "moduleResolution": "Bundler",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "types": ["node"],
-    "baseUrl": "../..",
     "paths": {
-      "@vuerend/core": ["packages/core/src/index.ts"],
-      "@vuerend/core/*": ["packages/core/src/*"]
+      "@vuerend/core": ["../core/src/index.ts"],
+      "@vuerend/core/*": ["../core/src/*"]
     },
     "strict": true,
     "declaration": true,

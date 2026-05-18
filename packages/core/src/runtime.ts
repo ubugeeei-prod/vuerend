@@ -1,4 +1,8 @@
-export { createMemoryRenderCache, MemoryRenderCache } from "./runtime/cache.js";
+export {
+  createMemoryRenderCache,
+  MemoryRenderCache,
+  type MemoryRenderCacheOptions,
+} from "./runtime/cache.js";
 export { renderDocument } from "./runtime/document.js";
 export {
   createIslandRenderState,

@@ -46,9 +46,12 @@ jobs:
           .github/workflows
           .github/dependabot.yml
           .github/CODEOWNERS
+          CONTRIBUTING.md
+          LICENSE
           package.json
           pnpm-workspace.yaml
           README.md
+          SECURITY.md
           scripts
 
   core-check:
@@ -80,6 +83,7 @@ jobs:
       - name: Check core package
         run: >-
           pnpm exec vp check --no-lint
+          packages/core/LICENSE
           packages/core/package.json
           packages/core/README.md
           packages/core/src
@@ -123,6 +127,7 @@ jobs:
       - name: Check adapter package
         run: >-
           pnpm exec vp check --no-lint
+          packages/${{ matrix.package }}/LICENSE
           packages/${{ matrix.package }}/package.json
           packages/${{ matrix.package }}/src
           packages/${{ matrix.package }}/vite.config.ts

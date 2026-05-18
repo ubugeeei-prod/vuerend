@@ -46,6 +46,30 @@ describe("createRequestHandler", () => {
     expect(html).toContain('data-slug="hello-world"');
   });
 
+  it("treats malformed dynamic route params as a route miss", async () => {
+    const PostPage = defineComponent({
+      setup() {
+        return () => h("article", "post");
+      },
+    });
+
+    const handler = createRequestHandler({
+      app: defineApp({
+        routes: [
+          defineRoute({
+            path: "/posts/:slug",
+            component: PostPage,
+          }),
+        ],
+      }),
+    });
+
+    const response = await handler(new Request("https://example.test/posts/%E0%A4%A"));
+
+    expect(response.status).toBe(404);
+    await expect(response.text()).resolves.toBe("Not Found");
+  });
+
   it("renders static route head metadata and shared stylesheets", async () => {
     const HomePage = defineComponent({
       setup() {
@@ -95,6 +119,36 @@ describe("createRequestHandler", () => {
     expect(html.match(/\/assets\/common\.css/g)).toHaveLength(1);
     expect(html.match(/\/assets\/page\.css/g)).toHaveLength(1);
     expect(html.match(/\/assets\/runtime\.css/g)).toHaveLength(1);
+  });
+
+  it("rejects invalid rendered HTML attribute names", async () => {
+    const HomePage = defineComponent({
+      setup() {
+        return () => h("main", "home");
+      },
+    });
+    const unsafeMeta = {
+      name: "description",
+      'content" autofocus="true': "boom",
+    };
+
+    const handler = createRequestHandler({
+      app: defineApp({
+        routes: [
+          defineRoute({
+            path: "/",
+            component: HomePage,
+            head: {
+              meta: [unsafeMeta],
+            },
+          }),
+        ],
+      }),
+    });
+
+    await expect(handler(new Request("https://example.test/"))).rejects.toThrow(
+      'Invalid HTML attribute name: content" autofocus="true',
+    );
   });
 
   it("resolves route head functions per request", async () => {

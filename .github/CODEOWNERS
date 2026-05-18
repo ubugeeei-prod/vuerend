@@ -1,4 +1,10 @@
 * @ubugeeei
 
-/.github/workflows/ @ubugeeei
-/.github/dependabot.yml @ubugeeei
+/.github/ @ubugeeei
+/scripts/ @ubugeeei
+/packages/core/ @ubugeeei
+/packages/node/ @ubugeeei
+/packages/bun/ @ubugeeei
+/packages/deno/ @ubugeeei
+/packages/cloudflare/ @ubugeeei
+/packages/service-worker/ @ubugeeei

@@ -7,6 +7,8 @@ import type {
   RouteHead,
 } from "./types.js";
 
+const ATTRIBUTE_NAME_PATTERN = /^[A-Za-z_:][A-Za-z0-9:._-]*$/;
+
 /** Input required to assemble the final HTML document string. */
 export interface RenderDocumentInput {
   appDocument?: DocumentConfig | undefined;
@@ -199,7 +201,10 @@ function renderClientEntry(entry: string | undefined, islandsRendered: boolean):
 function renderAttributes(attributes: Record<string, string | undefined>): string {
   const rendered = Object.entries(attributes)
     .filter(([, value]) => value !== undefined && value !== "")
-    .map(([key, value]) => ` ${key}="${escapeAttribute(value ?? "")}"`);
+    .map(([key, value]) => {
+      assertValidAttributeName(key);
+      return ` ${key}="${escapeAttribute(value ?? "")}"`;
+    });
 
   return rendered.join("");
 }
@@ -221,6 +226,12 @@ function escapeScript(value: string): string {
     .replaceAll("<", "\\u003c")
     .replaceAll("\u2028", "\\u2028")
     .replaceAll("\u2029", "\\u2029");
+}
+
+function assertValidAttributeName(name: string): void {
+  if (!ATTRIBUTE_NAME_PATTERN.test(name)) {
+    throw new TypeError(`Invalid HTML attribute name: ${name}`);
+  }
 }
 
 function createStylesheetLinks(entries?: readonly string[]): HeadLink[] {

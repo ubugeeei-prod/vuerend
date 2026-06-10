@@ -1,6 +1,6 @@
 {
   "name": "@vuerend/core",
-  "version": "0.3.0",
+  "version": "1.0.0-rc.0",
   "description": "Zero JavaScript-first Vue MPA runtime and Vite v8 plugin with SSR, SSG, and secure islands.",
   "license": "MIT",
   "repository": {

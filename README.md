@@ -193,7 +193,7 @@ After that first publish succeeds, configure npm Trusted Publishing for each pac
 
 Use this GitHub repository and workflow file:
 
-- repository: `ubugeeei/vuerend`
+- repository: `ubugeeei-prod/vuerend`
 - workflow: `.github/workflows/publish.yml`
 
 Once those trusted publishers are saved, future releases only need:

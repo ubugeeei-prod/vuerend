@@ -15,7 +15,14 @@ defineProps<{
   <div class="docs-shell">
     <aside class="docs-sidebar">
       <a class="docs-brand" href="/">
-        <img class="docs-brand-mark" src="/logo.svg" width="30" height="30" alt="" aria-hidden="true" />
+        <img
+          class="docs-brand-mark"
+          src="/logo.svg"
+          width="30"
+          height="30"
+          alt=""
+          aria-hidden="true"
+        />
         <span>vuerend</span>
       </a>
       <nav class="docs-nav">

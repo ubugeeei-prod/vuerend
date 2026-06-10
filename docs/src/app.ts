@@ -39,6 +39,7 @@ export default defineApp({
   document: {
     title: "Vuerend",
     titleTemplate: "%s | Vuerend Docs",
+    head: '<link rel="icon" type="image/svg+xml" href="/logo.svg">',
     meta: [
       {
         name: "description",

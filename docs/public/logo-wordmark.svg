@@ -1,0 +1,11 @@
+<svg width="208" height="48" viewBox="0 0 208 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vuerend">
+  <defs>
+    <linearGradient id="vuerendWordmark" x1="11" y1="12" x2="37" y2="37" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34d399" />
+      <stop offset="1" stop-color="#5b9dff" />
+    </linearGradient>
+  </defs>
+  <path d="M11 12 L24 23 L37 12" stroke="url(#vuerendWordmark)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5" />
+  <path d="M11 25 L24 36 L37 25" stroke="url(#vuerendWordmark)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="58" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="26" font-weight="600" letter-spacing="-0.6" fill="currentColor">vuerend</text>
+</svg>

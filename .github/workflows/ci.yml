@@ -282,7 +282,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install chromium
 
       - name: Run browser tests
         run: pnpm exec vitest run --config vitest.browser.config.ts

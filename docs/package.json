@@ -17,7 +17,7 @@
   "devDependencies": {
     "@ox-content/vite-plugin": "^2.68.0",
     "vite": "^8.0.13",
-    "vite-plus": "^0.1.21",
+    "vite-plus": "0.1.15",
     "void": "^0.9.3"
   }
 }

@@ -1,0 +1,23 @@
+{
+  "name": "@vuerend/docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "build": "vp build",
+    "preview": "vp preview",
+    "deploy": "vpx void deploy"
+  },
+  "dependencies": {
+    "@vuerend/core": "workspace:*",
+    "@vuerend/node": "workspace:*",
+    "srvx": "^0.11.14",
+    "vue": "3.6.0-beta.12"
+  },
+  "devDependencies": {
+    "@ox-content/vite-plugin": "^2.68.0",
+    "vite": "^8.0.13",
+    "vite-plus": "^0.1.21",
+    "void": "^0.9.3"
+  }
+}

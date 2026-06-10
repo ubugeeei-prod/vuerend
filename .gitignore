@@ -7,3 +7,6 @@ __screenshots__
 .DS_Store
 *.tgz
 .release-artifacts
+.void
+.wrangler
+docs/docs

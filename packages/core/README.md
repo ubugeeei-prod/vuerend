@@ -113,6 +113,64 @@ export default defineConfig({
 
 `vapor: true` hydrates islands with Vue's `createVaporSSRApp` and keeps that runtime on a lazy path until an island actually mounts. For a gradual migration where Vapor and regular Vue components are intentionally mixed inside the same island tree, use `vapor: "interop"` or `vapor: { mode: "interop" }`. Interop is safer for mixed trees, but it can include both runtimes and reduce the bundle-size win.
 
+## Compiler Backend (Vize)
+
+The default SFC compiler is `@vitejs/plugin-vue`. You can opt into an alternative compiler backend through the `vuePlugin` option. [Vize](https://vizejs.dev) is a Rust-native Vue toolchain whose `@vizejs/vite-plugin` is a drop-in replacement for `@vitejs/plugin-vue`, so no component changes are required.
+
+Install the plugin next to Vuerend. It is declared as an optional peer dependency, so it is only needed when you opt in:
+
+```sh
+pnpm add -D @vizejs/vite-plugin
+```
+
+```ts
+// vite.config.ts
+import { defineConfig } from "vite";
+import vize from "@vizejs/vite-plugin";
+import { vuerend } from "@vuerend/core/vite";
+
+export default defineConfig({
+  plugins: [
+    vuerend({
+      app: "./src/app.ts",
+      islands: "./src/islands.ts",
+      vuePlugin: vize(),
+    }),
+  ],
+});
+```
+
+When `vuePlugin` is set, the default Vue SFC plugin is not installed and the `vue` option is ignored. JSX handling stays independent through `jsx` / `jsxPlugin`, and you can pass `vuePlugin: false` to disable SFC compilation entirely.
+
+> [!NOTE]
+> This replaces the SFC compiler with Vize's own native compiler. If you instead run Vize in its host-compiler mode (e.g. `vueVersion: "legacy"`), Vize delegates `.vue` compilation back to `@vitejs/plugin-vue`. In that mode keep the default Vue plugin and add `vize()` as a separate top-level plugin rather than passing it through `vuePlugin`.
+
+### Vize with Vapor
+
+Vize can also compile Vue 3.6 Vapor SFCs. Vuerend's `vapor` option drives the client hydration runtime, and Vize handles the compiler side, so enable both when your islands are authored with `<script setup vapor>`:
+
+```ts
+// vite.config.ts
+import { defineConfig } from "vite";
+import vize from "@vizejs/vite-plugin";
+import { vuerend } from "@vuerend/core/vite";
+
+export default defineConfig({
+  plugins: [
+    vuerend({
+      app: "./src/app.ts",
+      islands: "./src/islands.ts",
+      // client hydration runtime
+      vapor: true,
+      // Vize compiler backend with Vapor output
+      vuePlugin: vize({ vapor: true }),
+    }),
+  ],
+});
+```
+
+`vize({ vapor: true })` is equivalent to setting `compiler.vapor: true` in a shared `vize.config.ts`. See the [Vue Vapor](#vue-vapor) section for what the `vapor` runtime option does and when interop mode is preferable.
+
 ## Routing
 
 - Routing is explicit with `defineRoute()`.

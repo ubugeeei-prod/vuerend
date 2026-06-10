@@ -20,7 +20,21 @@ export interface VuerendPluginOptions {
   vapor?: VuerendVaporOptions;
   vue?: Parameters<typeof vue>[0] | false;
   jsx?: Parameters<typeof vueJsx>[0] | false;
-  /** Override the default Vue SFC plugin. Useful for trying compiler alternatives such as Vize. */
+  /**
+   * Override the default `@vitejs/plugin-vue` SFC compiler with an alternative backend.
+   *
+   * This is the opt-in entry point for swapping in a drop-in compiler such as
+   * [Vize](https://vizejs.dev) (`@vizejs/vite-plugin`):
+   *
+   * ```ts
+   * import vize from "@vizejs/vite-plugin";
+   * vuerend({ app: "./src/app.ts", vuePlugin: vize() });
+   * ```
+   *
+   * When set, the default Vue SFC plugin is not added and the `vue` option is
+   * ignored. JSX handling stays independent via `jsx` / `jsxPlugin`. Pass
+   * `false` to disable SFC compilation entirely.
+   */
   vuePlugin?: PluginOption | PluginOption[] | false;
   /** Override the default Vue JSX plugin. */
   jsxPlugin?: PluginOption | PluginOption[] | false;

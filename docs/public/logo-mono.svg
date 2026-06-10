@@ -1,4 +1,4 @@
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vuerend">
-  <path d="M11 12 L24 23 L37 12" stroke="currentColor" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5" />
-  <path d="M11 25 L24 36 L37 25" stroke="currentColor" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M6 11 L15.5 11 L24 25 L24 37 Z" fill="currentColor" />
+  <path d="M42 11 L32.5 11 L24 25 L24 37 Z" fill="currentColor" opacity="0.55" />
 </svg>

@@ -106,6 +106,262 @@ describe("hydrateIslands", () => {
     expect(load).toHaveBeenCalledTimes(1);
   });
 
+  it("hydrates on idle using requestIdleCallback when available", async () => {
+    const root = new FakeElement("div");
+    const app = { mount: vi.fn() };
+    let idleCallback: (() => void) | undefined;
+
+    root.dataset.vsIsland = "island-1";
+    root.dataset.vsComponent = "counter";
+    root.dataset.vsHydrate = "idle";
+
+    vi.stubGlobal("CSS", { escape: (value: string) => value });
+    vi.stubGlobal("document", {
+      querySelector: vi.fn(() => ({ textContent: "{}" })),
+      querySelectorAll: vi.fn(() => [root]),
+    });
+    vi.stubGlobal("Element", FakeElement);
+    vi.stubGlobal("HTMLElement", FakeElement);
+    vi.stubGlobal("HTMLFormElement", FakeElement);
+    vi.stubGlobal("MouseEvent", FakeMouseEvent);
+
+    const requestIdleCallback = vi.fn((callback: () => void) => {
+      idleCallback = callback;
+    });
+    vi.stubGlobal("window", { requestIdleCallback });
+
+    const load = vi.fn(async () => ({ default: {} }));
+    const island = {
+      __vuerendIsland: { hydrate: "idle", id: "counter", load, ssr: true },
+    } as unknown as AnyDefinedIsland;
+
+    vueMocks.createSSRApp.mockReturnValue(app);
+
+    const { hydrateIslands } = await import("../src/client/hydrate");
+    const hydration = hydrateIslands([island]);
+
+    await flushPromises();
+
+    // Nothing mounts until the idle callback fires.
+    expect(requestIdleCallback).toHaveBeenCalledTimes(1);
+    expect(load).not.toHaveBeenCalled();
+    expect(app.mount).not.toHaveBeenCalled();
+
+    idleCallback?.();
+    await hydration;
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(app.mount).toHaveBeenCalledTimes(1);
+    expect(app.mount.mock.calls[0]?.[0]).toBe(root);
+  });
+
+  it("falls back to setTimeout when requestIdleCallback is unavailable", async () => {
+    const root = new FakeElement("div");
+    const app = { mount: vi.fn() };
+
+    root.dataset.vsIsland = "island-1";
+    root.dataset.vsComponent = "counter";
+    root.dataset.vsHydrate = "idle";
+
+    vi.stubGlobal("CSS", { escape: (value: string) => value });
+    vi.stubGlobal("document", {
+      querySelector: vi.fn(() => ({ textContent: "{}" })),
+      querySelectorAll: vi.fn(() => [root]),
+    });
+    vi.stubGlobal("Element", FakeElement);
+    vi.stubGlobal("HTMLElement", FakeElement);
+    vi.stubGlobal("HTMLFormElement", FakeElement);
+    vi.stubGlobal("MouseEvent", FakeMouseEvent);
+
+    // No requestIdleCallback on the window: the fallback timer must drive mount.
+    vi.stubGlobal("window", {});
+
+    const load = vi.fn(async () => ({ default: {} }));
+    const island = {
+      __vuerendIsland: { hydrate: "idle", id: "counter", load, ssr: true },
+    } as unknown as AnyDefinedIsland;
+
+    vueMocks.createSSRApp.mockReturnValue(app);
+
+    const { hydrateIslands } = await import("../src/client/hydrate");
+    const hydration = hydrateIslands([island]);
+
+    // flushPromises awaits a macrotask, allowing the setTimeout fallback to fire.
+    await flushPromises();
+    await hydration;
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(app.mount).toHaveBeenCalledTimes(1);
+    expect(app.mount.mock.calls[0]?.[0]).toBe(root);
+  });
+
+  it("hydrates immediately when the media query already matches", async () => {
+    const root = new FakeElement("div");
+    const app = { mount: vi.fn() };
+    const addEventListener = vi.fn();
+
+    root.dataset.vsIsland = "island-1";
+    root.dataset.vsComponent = "counter";
+    root.dataset.vsHydrate = "media";
+    root.dataset.vsMedia = "(min-width: 768px)";
+
+    vi.stubGlobal("CSS", { escape: (value: string) => value });
+    vi.stubGlobal("document", {
+      querySelector: vi.fn(() => ({ textContent: "{}" })),
+      querySelectorAll: vi.fn(() => [root]),
+    });
+    vi.stubGlobal("Element", FakeElement);
+    vi.stubGlobal("HTMLElement", FakeElement);
+    vi.stubGlobal("HTMLFormElement", FakeElement);
+    vi.stubGlobal("MouseEvent", FakeMouseEvent);
+
+    const matchMedia = vi.fn((query: string) => ({
+      addEventListener,
+      matches: true,
+      media: query,
+    }));
+    vi.stubGlobal("window", { matchMedia });
+
+    const load = vi.fn(async () => ({ default: {} }));
+    const island = {
+      __vuerendIsland: { hydrate: "media", id: "counter", load, ssr: true },
+    } as unknown as AnyDefinedIsland;
+
+    vueMocks.createSSRApp.mockReturnValue(app);
+
+    const { hydrateIslands } = await import("../src/client/hydrate");
+    await hydrateIslands([island]);
+
+    expect(matchMedia).toHaveBeenCalledWith("(min-width: 768px)");
+    expect(addEventListener).not.toHaveBeenCalled();
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(app.mount).toHaveBeenCalledTimes(1);
+    expect(app.mount.mock.calls[0]?.[0]).toBe(root);
+  });
+
+  it("hydrates when the media query becomes a match", async () => {
+    const root = new FakeElement("div");
+    const app = { mount: vi.fn() };
+    let changeListener: (() => void) | undefined;
+    let listenerOptions: AddEventListenerOptions | undefined;
+
+    root.dataset.vsIsland = "island-1";
+    root.dataset.vsComponent = "counter";
+    root.dataset.vsHydrate = "media";
+    root.dataset.vsMedia = "(min-width: 768px)";
+
+    vi.stubGlobal("CSS", { escape: (value: string) => value });
+    vi.stubGlobal("document", {
+      querySelector: vi.fn(() => ({ textContent: "{}" })),
+      querySelectorAll: vi.fn(() => [root]),
+    });
+    vi.stubGlobal("Element", FakeElement);
+    vi.stubGlobal("HTMLElement", FakeElement);
+    vi.stubGlobal("HTMLFormElement", FakeElement);
+    vi.stubGlobal("MouseEvent", FakeMouseEvent);
+
+    const matchMedia = vi.fn((query: string) => ({
+      addEventListener: (type: string, listener: () => void, options?: AddEventListenerOptions) => {
+        if (type === "change") {
+          changeListener = listener;
+          listenerOptions = options;
+        }
+      },
+      matches: false,
+      media: query,
+    }));
+    vi.stubGlobal("window", { matchMedia });
+
+    const load = vi.fn(async () => ({ default: {} }));
+    const island = {
+      __vuerendIsland: { hydrate: "media", id: "counter", load, ssr: true },
+    } as unknown as AnyDefinedIsland;
+
+    vueMocks.createSSRApp.mockReturnValue(app);
+
+    const { hydrateIslands } = await import("../src/client/hydrate");
+    const hydration = hydrateIslands([island]);
+
+    await flushPromises();
+
+    // The island waits for the media query to start matching.
+    expect(matchMedia).toHaveBeenCalledWith("(min-width: 768px)");
+    expect(listenerOptions).toEqual({ once: true });
+    expect(load).not.toHaveBeenCalled();
+    expect(app.mount).not.toHaveBeenCalled();
+
+    changeListener?.();
+    await hydration;
+
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(app.mount).toHaveBeenCalledTimes(1);
+    expect(app.mount.mock.calls[0]?.[0]).toBe(root);
+  });
+
+  it("replays an early form submit after mount", async () => {
+    const root = new FakeElement("div");
+    const form = new FakeElement("form");
+    const observerCallbacks: Array<(entries: Array<{ isIntersecting: boolean }>) => void> = [];
+    let replayedSubmits = 0;
+
+    root.dataset.vsIsland = "island-1";
+    root.dataset.vsComponent = "counter";
+    root.dataset.vsHydrate = "visible";
+    root.append(form);
+
+    vi.stubGlobal("CSS", { escape: (value: string) => value });
+    vi.stubGlobal("document", {
+      querySelector: vi.fn(() => ({ textContent: "{}" })),
+      querySelectorAll: vi.fn(() => [root]),
+    });
+    vi.stubGlobal("Element", FakeElement);
+    vi.stubGlobal("HTMLElement", FakeElement);
+    vi.stubGlobal("HTMLFormElement", FakeElement);
+    vi.stubGlobal("MouseEvent", FakeMouseEvent);
+    vi.stubGlobal("SubmitEvent", FakeSubmitEvent);
+    const FakeIntersectionObserver = class {
+      constructor(callback: (entries: Array<{ isIntersecting: boolean }>) => void) {
+        observerCallbacks.push(callback);
+      }
+
+      disconnect() {}
+
+      observe() {}
+    };
+    vi.stubGlobal("IntersectionObserver", FakeIntersectionObserver);
+    vi.stubGlobal("window", { IntersectionObserver: FakeIntersectionObserver });
+
+    const load = vi.fn(async () => ({ default: {} }));
+    const island = {
+      __vuerendIsland: { hydrate: "visible", id: "counter", load, ssr: true },
+    } as unknown as AnyDefinedIsland;
+
+    vueMocks.createSSRApp.mockReturnValue({
+      mount() {
+        form.addEventListener("submit", () => {
+          replayedSubmits += 1;
+        });
+      },
+    });
+
+    const { hydrateIslands } = await import("../src/client/hydrate");
+    const hydration = hydrateIslands([island]);
+    const earlySubmit = new FakeSubmitEvent("submit", { bubbles: true, cancelable: true });
+
+    form.dispatchEvent(earlySubmit);
+    await flushPromises();
+
+    // The early submit is suppressed, mount is forced, and the submit is replayed.
+    expect(earlySubmit.defaultPrevented).toBe(true);
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(replayedSubmits).toBe(1);
+
+    observerCallbacks[0]?.([{ isIntersecting: true }]);
+    await hydration;
+
+    expect(load).toHaveBeenCalledTimes(1);
+  });
+
   it("hydrates vapor islands with createVaporSSRApp", async () => {
     const root = new FakeElement("div");
     const load = vi.fn(async () => ({ default: {} }));
@@ -239,6 +495,33 @@ class FakeMouseEvent {
   target: FakeElement | undefined;
 
   constructor(type: string, init: Partial<MouseEventInit> = {}) {
+    this.type = type;
+    this.bubbles = init.bubbles ?? false;
+    this.cancelable = init.cancelable ?? false;
+    this.composed = init.composed ?? false;
+  }
+
+  preventDefault() {
+    if (this.cancelable) {
+      this.defaultPrevented = true;
+    }
+  }
+
+  stopImmediatePropagation() {
+    this.propagationStopped = true;
+  }
+}
+
+class FakeSubmitEvent {
+  readonly type: string;
+  readonly bubbles: boolean;
+  readonly cancelable: boolean;
+  readonly composed: boolean;
+  defaultPrevented = false;
+  propagationStopped = false;
+  target: FakeElement | undefined;
+
+  constructor(type: string, init: Partial<EventInit> = {}) {
     this.type = type;
     this.bubbles = init.bubbles ?? false;
     this.cancelable = init.cancelable ?? false;

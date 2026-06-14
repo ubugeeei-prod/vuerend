@@ -6,7 +6,7 @@
     "dev": "vp dev",
     "build": "vp build",
     "preview": "vp preview",
-    "deploy": "vpx void deploy"
+    "deploy": "vp build && vpx void deploy --dir dist/client"
   },
   "dependencies": {
     "@vuerend/core": "workspace:*",

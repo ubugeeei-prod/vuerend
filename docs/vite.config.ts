@@ -13,6 +13,7 @@ export default defineConfig({
     voidPlugin(),
     oxContent({
       srcDir: "content",
+      ssg: false,
       gfm: true,
       tables: true,
       taskLists: true,

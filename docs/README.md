@@ -3,7 +3,7 @@
 The Vuerend documentation site. It is itself a Vuerend app (dogfooding): Markdown
 content is parsed by [Ox Content](https://vizejs.dev) into `{ html, frontmatter, toc }`
 and rendered through Zero JavaScript-first SSG routes, then hosted on
-[Void](https://void.cloud) via `vpx void deploy`.
+[Void](https://void.cloud) from the prerendered `dist/client` output.
 
 ## How it works
 
@@ -14,7 +14,8 @@ and rendered through Zero JavaScript-first SSG routes, then hosted on
   (`index.md` → `/`, `routing.md` → `/routing`), and renders them with `render.strategy: "ssg"`.
 - `src/routes/DocRoute.vue` renders the sidebar, the parsed HTML, and the table of contents.
   No client JavaScript ships by default.
-- `voidPlugin()` builds the fetch handler into a Cloudflare Worker bundle under `dist/ssr`.
+- `voidPlugin()` also builds a Cloudflare Worker bundle under `dist/ssr` for runtime
+  targets, but the public docs deploy currently serves the static SSG output.
 
 ## Develop
 
@@ -59,12 +60,12 @@ It is picked up automatically as a new route and sidebar entry.
 
 ## Deploy
 
-The site deploys to Void (Cloudflare Workers):
+The public site deploys the prerendered static output to Void:
 
 ```bash
 vp run docs#deploy
 # or, from this directory:
-vpx void deploy
+vp build && vpx void deploy --dir dist/client
 ```
 
 Deploying requires a Void/Cloudflare account; authenticate with Void before running deploy.

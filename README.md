@@ -61,6 +61,10 @@ vp check
 vp test
 vp pack
 node ./scripts/build-examples.mjs
+vp run docs#dev
+vp run docs#build
+vp run docs#preview
+vp run docs#deploy
 vp run release patch
 ```
 

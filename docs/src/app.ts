@@ -49,8 +49,9 @@ export default defineApp({
     ],
     stylesheets: ["/styles/docs.css"],
   },
-  routes: docs.map((doc) =>
-    defineRoute({
+  routes: docs.map((doc) => {
+    const pageIndex = nav.findIndex((item) => item.path === doc.path);
+    return defineRoute({
       path: doc.path,
       component: DocRoute,
       getProps: () => ({
@@ -59,9 +60,13 @@ export default defineApp({
         toc: doc.toc,
         nav,
         current: doc.path,
+        pageIndex,
+        pageCount: nav.length,
+        previous: nav[pageIndex - 1] ?? null,
+        next: nav[pageIndex + 1] ?? null,
       }),
       head: { title: doc.title },
       render: { strategy: "ssg" },
-    }),
-  ),
+    });
+  }),
 });

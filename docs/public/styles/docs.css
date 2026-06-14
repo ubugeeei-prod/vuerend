@@ -135,21 +135,10 @@ a:hover {
   grid-template-columns: 34px minmax(0, 1fr);
   gap: 12px;
   align-items: start;
-  border-top: 1px solid transparent;
-  border-bottom: 1px solid transparent;
+  border: 1px solid transparent;
   color: var(--muted);
-  padding: 12px 10px 12px 0;
+  padding: 12px 10px;
   text-decoration: none;
-}
-
-.docs-nav-link::before {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -18px;
-  width: 3px;
-  background: transparent;
-  content: "";
 }
 
 .docs-nav-link:hover {
@@ -162,10 +151,6 @@ a:hover {
   background: var(--surface);
   border-color: var(--line);
   color: var(--ink);
-}
-
-.docs-nav-link.is-active::before {
-  background: var(--accent);
 }
 
 .docs-nav-index {
@@ -456,19 +441,17 @@ a:hover {
 
 .docs-toc a {
   display: block;
-  border-left: 1px solid var(--line);
   color: var(--muted);
-  padding: 7px 0 7px 13px;
+  padding: 7px 0;
   text-decoration: none;
 }
 
 .docs-toc a:hover {
-  border-color: var(--accent);
   color: var(--ink);
 }
 
 .docs-toc ul ul a {
-  padding-left: 25px;
+  padding-left: 12px;
 }
 
 @media (max-width: 1180px) {
@@ -534,10 +517,6 @@ a:hover {
     border-radius: 6px;
     background: var(--surface);
     padding: 10px;
-  }
-
-  .docs-nav-link::before {
-    display: none;
   }
 
   .docs-nav-link.is-active {

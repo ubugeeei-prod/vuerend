@@ -1,6 +1,6 @@
 {
   "name": "@vuerend/node",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-rc.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
   "peerDependencies": {
     "playwright": "^1.59.1",
     "vite": "^8.0.13",
-    "vue": "^3.5.31 || ^3.6.0-beta.10"
+    "vue": "^3.5.31 || ^3.6.0-beta.15"
   },
   "peerDependenciesMeta": {
     "playwright": {

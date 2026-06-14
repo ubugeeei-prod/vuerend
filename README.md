@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/public/logo-wordmark.svg" alt="Vuerend" width="212" height="48">
+</p>
+
 # Vuerend Monorepo
 
 Vuerend is a Zero JavaScript-first way to build Vue applications for MPAs. It treats server-rendered documents as the default unit, supports SSR and SSG out of the box, and keeps client JavaScript opt-in through explicit islands while the same fetch handler can run on Node, Bun, Deno, Cloudflare Workers, or service workers.
@@ -61,6 +65,10 @@ vp check
 vp test
 vp pack
 node ./scripts/build-examples.mjs
+vp run docs#dev
+vp run docs#build
+vp run docs#preview
+vp run docs#deploy
 vp run release patch
 ```
 

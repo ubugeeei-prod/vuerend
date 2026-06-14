@@ -92,7 +92,7 @@ Vuerend has an opt-in Vapor hydration entry for Vue 3.6+ apps. Use it when the c
 Install the matching Vapor runtime next to Vue:
 
 ```sh
-pnpm add vue@3.6.0-beta.10 @vue/runtime-vapor@3.6.0-beta.10
+pnpm add vue@3.6.0-beta.15 @vue/runtime-vapor@3.6.0-beta.15
 ```
 
 ```ts
